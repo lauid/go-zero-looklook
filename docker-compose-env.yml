@@ -33,7 +33,7 @@ services:
       TZ: Asia/Shanghai
     volumes:
       - ./deploy/prometheus/server/prometheus.yml:/etc/prometheus/prometheus.yml
-      - ./data/prometheus/data:/prometheus
+      - ${DOCKER_VOLUME_PATH}/prometheus/data:/prometheus
     command:
       - '--config.file=/etc/prometheus/prometheus.yml'
       - '--storage.tsdb.path=/prometheus'
@@ -55,7 +55,7 @@ services:
       TZ: Asia/Shanghai
     restart: always
     volumes:
-        - ./data/grafana/data:/var/lib/grafana
+        - ${DOCKER_VOLUME_PATH}/grafana/data:/var/lib/grafana
     ports:
         - "3001:3000"
     networks:
@@ -71,7 +71,7 @@ services:
       - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
       - TZ=Asia/Shanghai
     volumes:
-      - ./data/elasticsearch/data:/usr/share/elasticsearch/data
+      - ${DOCKER_VOLUME_PATH}/elasticsearch/data:/usr/share/elasticsearch/data:rw
     restart: always
     ports:
     - 9200:9200
@@ -193,7 +193,8 @@ services:
       - 33069:3306
     volumes:
       # 数据挂载 - Data mounting
-      - ./data/mysql/data:/var/lib/mysql
+      - ${DOCKER_VOLUME_PATH}/mysql/data:/var/lib/mysql:rw
+      - ./deploy/mysql/my.cnf:/etc/my.cnf
       # 日志
     command:
       # 将mysql8.0默认密码策略 修改为 原先 策略 (mysql8.0对其默认策略做了更改 会导致密码无法匹配) 
@@ -219,7 +220,7 @@ services:
       TZ: Asia/Shanghai
     volumes:
       # 数据文件 - data files
-      - ./data/redis/data:/data:rw
+      - ${DOCKER_VOLUME_PATH}/redis/data:/data:rw
     command: "redis-server --requirepass G62m50oigInC30sf  --appendonly yes"
     privileged: true
     restart: always
